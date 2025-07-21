@@ -1,6 +1,6 @@
 # BIND DNS Server Configuration Guide
 
-**Author:** Deba Dey  
+**Author:** Deba Protim Dey  
 **Date:** July 22, 2025  
 **Last Updated:** July 22, 2025  
 
