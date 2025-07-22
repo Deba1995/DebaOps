@@ -266,8 +266,8 @@ $TTL    604800
 @    IN    NS    dns2.quantum.local.
 
 ; PTR records
-213.1    IN    PTR    dns1.quantum.local. ; 172.28.1.213
-214.1    IN    PTR    dns2.quantum.local. ; 172.28.1.214
+213    IN    PTR    dns1.quantum.local. ; 172.28.1.213
+214    IN    PTR    dns2.quantum.local. ; 172.28.1.214
 ```
 
 #### Reverse zone file for 172.24.1.x: `/etc/bind/zones/db.172.24`
@@ -289,7 +289,7 @@ $TTL    604800
 @    IN    NS    dns2.quantum.local.
 
 ; PTR records for 172.24.1.0/24
-221.1    IN    PTR    pc1.quantum.local. ; 172.24.1.221
+221    IN    PTR    pc1.quantum.local. ; 172.24.1.221
 ```
 
 ### 5. Validate zone files
