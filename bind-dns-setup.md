@@ -4,7 +4,7 @@
 **Date:** July 22, 2025  
 **Last Updated:** July 22, 2025  
 
-A comprehensive guide for setting up primary and secondary BIND DNS servers on Ubuntu/Debian systems.
+A comprehensive guide for setting up Authoritative-only DNS servers primary and secondary using BIND9 servers on Ubuntu/Debian systems.
 
 ## Overview
 
@@ -140,9 +140,8 @@ logging {
 
 options {
     directory "/var/cache/bind";
-    recursion yes;
+    recursion no; // for authoritative server
     allow-query { trusted-networks; };
-    allow-recursion { trusted-networks; };
     listen-on { 127.0.0.1; 172.28.1.213; };
     allow-transfer { none; };  # Disable transfers by default
 
