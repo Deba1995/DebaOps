@@ -144,7 +144,7 @@ options {
     allow-query { trusted-networks; };
     allow-recursion { trusted-networks; };
     listen-on { 127.0.0.1; 172.28.1.213; };
-    //allow-transfer { slave-servers; };
+    allow-transfer { none; };  # Disable transfers by default
 
     // Forwarders for external resolution
     forwarders {
@@ -164,7 +164,13 @@ options {
     //========================================================================
     dnssec-validation auto;
 
-    listen-on-v6 { none; };
+    listen-on-v6 { ::1; };  // allow localhost IPv6
+
+    // rate-limiting to prevent DNS amplification attacks,
+    rate-limit {
+    responses-per-second 10;
+    window 5;
+    };
 };
 ```
 
@@ -217,16 +223,18 @@ zone "1.24.172.in-addr.arpa" {
 ;
 ; BIND data file for quantum.local domain
 ;
-$TTL    604800
+$TTL    604800        ; Default TTL for all records 7 days
 @   IN  SOA dns1.quantum.local. admin.quantum.local. (
-              7     ; Serial
-         604800     ; Refresh
-          86400     ; Retry
-        2419200     ; Expire
-         604800 )   ; Negative Cache TTL
+     2025072108     ; Serial number - increment when making changes YYYYMMDDNN
+         604800     ; Refresh interval - how often slaves check for updates  
+          86400     ; Retry interval - retry failed transfers after this time
+        2419200     ; Expire time - slaves stop answering after this period
+         604800 )   ; Negative cache TTL - cache NXDOMAIN responses
 ;
 
-; NS records for this zone
+; ===== NAME SERVER RECORDS =====
+; Define authoritative DNS servers for this zone
+
 @       IN      NS      dns1.quantum.local.
 @       IN      NS      dns2.quantum.local.
 
@@ -247,7 +255,7 @@ pc1     IN      A       172.24.1.221
 ;
 $TTL    604800
 @   IN  SOA dns1.quantum.local. admin.quantum.local. (
-              5     ; Serial
+     2025072108     ; Serial  ;YYYYMMDDNN
          604800     ; Refresh
           86400     ; Retry
         2419200     ; Expire
@@ -270,7 +278,7 @@ $TTL    604800
 ;
 $TTL    604800
 @   IN  SOA dns1.quantum.local. admin.quantum.local. (
-              8     ; Serial
+     2025072108     ; Serial  ;YYYYMMDDNN
          604800     ; Refresh
           86400     ; Retry
         2419200     ; Expire
@@ -375,7 +383,7 @@ network:
   ethernets:
     <interface-name>:
       nameservers:
-        search: [invalid]
+        search: [quantum.local]]
         addresses:
           - 127.0.0.1
           - 8.8.8.8
