@@ -382,7 +382,7 @@ network:
   ethernets:
     <interface-name>:
       nameservers:
-        search: [quantum.local]]
+        search: [quantum.local]
         addresses:
           - 127.0.0.1
           - 8.8.8.8
