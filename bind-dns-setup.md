@@ -87,7 +87,7 @@ acl "trusted-networks" {
     172.24.1.0/24; //VLAN 224
 };
 
-acl "slave-servers" {
+acl "secondary-servers" {
     172.28.1.214;
 };
 
@@ -190,19 +190,19 @@ vi /etc/bind/named.conf.local
 zone "example.com" {
     type primary;
     file "/etc/bind/zones/db.example.com";
-    allow-transfer { slave-servers; };
+    allow-transfer { secondary-servers; };
 };
 
 zone "1.28.172.in-addr.arpa" {
     type primary;
     file "/etc/bind/zones/db.172.28";
-    allow-transfer { slave-servers; };
+    allow-transfer { secondary-servers; };
 };
 
 zone "1.24.172.in-addr.arpa" {
     type primary;
     file "/etc/bind/zones/db.172.24";
-    allow-transfer { slave-servers; };
+    allow-transfer { secondary-servers; };
 };
 ```
 
