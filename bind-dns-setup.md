@@ -16,9 +16,9 @@ This guide covers the complete setup of a BIND DNS infrastructure with:
 
 ## Network Configuration
 
-- **Primary DNS**: 172.28.1.213 (dns1.quantum.local)
-- **Secondary DNS**: 172.28.1.214 (dns2.quantum.local)
-- **Domain**: quantum.local
+- **Primary DNS**: 172.28.1.213 (dns1.example.com)
+- **Secondary DNS**: 172.28.1.214 (dns2.example.com)
+- **Domain**: example.com
 - **VLANs**: 
   - 172.28.1.0/24 (VLAN 228)
   - 172.24.1.0/24 (VLAN 224)
@@ -29,7 +29,7 @@ This guide covers the complete setup of a BIND DNS infrastructure with:
 
 ```bash
 sudo apt update
-sudo apt install bind9 bind9utils dnsutils -y
+sudo apt install bind9 bind9utils -y
 ```
 
 ### Start and enable BIND service
@@ -144,14 +144,6 @@ options {
     allow-query { trusted-networks; };
     listen-on { 127.0.0.1; 172.28.1.213; };
     allow-transfer { none; };  # Disable transfers by default
-
-    // Forwarders for external resolution
-    forwarders {
-        8.8.8.8;
-        8.8.4.4;
-        1.1.1.1;
-    };
-
     // Security settings
     version "Not Disclosed";
     hostname "Not Disclosed";
@@ -195,9 +187,9 @@ nano /etc/bind/named.conf.local
 //include "/etc/bind/zones.rfc1918";
 
 // Forward zones
-zone "quantum.local" {
+zone "example.com" {
     type primary;
-    file "/etc/bind/zones/db.quantum.local";
+    file "/etc/bind/zones/db.example.com";
     allow-transfer { slave-servers; };
 };
 
@@ -216,14 +208,14 @@ zone "1.24.172.in-addr.arpa" {
 
 ### 4. Create zone files
 
-#### Forward zone file: `/etc/bind/zones/db.quantum.local`
+#### Forward zone file: `/etc/bind/zones/db.example.com`
 
 ```bind
 ;
-; BIND data file for quantum.local domain
+; BIND data file for example.com domain
 ;
 $TTL    604800        ; Default TTL for all records 7 days
-@   IN  SOA dns1.quantum.local. admin.quantum.local. (
+@   IN  SOA dns1.example.com. admin.example.com. (
      2025072108     ; Serial number - increment when making changes YYYYMMDDNN
          604800     ; Refresh interval - how often slaves check for updates  
           86400     ; Retry interval - retry failed transfers after this time
@@ -234,10 +226,10 @@ $TTL    604800        ; Default TTL for all records 7 days
 ; ===== NAME SERVER RECORDS =====
 ; Define authoritative DNS servers for this zone
 
-@       IN      NS      dns1.quantum.local.
-@       IN      NS      dns2.quantum.local.
+@       IN      NS      dns1.example.com.
+@       IN      NS      dns2.example.com.
 
-; A record for the domain root (quantum.local)
+; A record for the domain root (example.com)
 @       IN      A       172.28.1.213
 
 ; A records for hosts
@@ -253,7 +245,7 @@ pc1     IN      A       172.24.1.221
 ; BIND reverse data file for 172.28.1.x
 ;
 $TTL    604800
-@   IN  SOA dns1.quantum.local. admin.quantum.local. (
+@   IN  SOA dns1.example.com. admin.example.com. (
      2025072108     ; Serial  ;YYYYMMDDNN
          604800     ; Refresh
           86400     ; Retry
@@ -261,12 +253,12 @@ $TTL    604800
          604800 )   ; Negative Cache TTL
 
 ; NS records for this zone
-@    IN    NS    dns1.quantum.local.
-@    IN    NS    dns2.quantum.local.
+@    IN    NS    dns1.example.com.
+@    IN    NS    dns2.example.com.
 
 ; PTR records
-213    IN    PTR    dns1.quantum.local. ; 172.28.1.213
-214    IN    PTR    dns2.quantum.local. ; 172.28.1.214
+213    IN    PTR    dns1.example.com. ; 172.28.1.213
+214    IN    PTR    dns2.example.com. ; 172.28.1.214
 ```
 
 #### Reverse zone file for 172.24.1.x: `/etc/bind/zones/db.172.24`
@@ -276,7 +268,7 @@ $TTL    604800
 ; BIND reverse data file for 172.24.1.x
 ;
 $TTL    604800
-@   IN  SOA dns1.quantum.local. admin.quantum.local. (
+@   IN  SOA dns1.example.com. admin.example.com. (
      2025072108     ; Serial  ;YYYYMMDDNN
          604800     ; Refresh
           86400     ; Retry
@@ -284,18 +276,18 @@ $TTL    604800
          604800 )   ; Negative Cache TTL
 
 ; NS records for this zone
-@    IN    NS    dns1.quantum.local.
-@    IN    NS    dns2.quantum.local.
+@    IN    NS    dns1.example.com.
+@    IN    NS    dns2.example.com.
 
 ; PTR records for 172.24.1.0/24
-221    IN    PTR    pc1.quantum.local. ; 172.24.1.221
+221    IN    PTR    pc1.example.com. ; 172.24.1.221
 ```
 
 ### 5. Validate zone files
 
 ```bash
 # Check forward zone
-named-checkzone quantum.local /etc/bind/zones/db.quantum.local
+named-checkzone example.com /etc/bind/zones/db.example.com
 
 # Check reverse zones
 named-checkzone 1.28.172.in-addr.arpa /etc/bind/zones/db.172.28
@@ -319,9 +311,9 @@ sudo chown bind:bind /var/log/named
 //include "/etc/bind/zones.rfc1918";
 
 // Forward zones
-zone "quantum.local" {
+zone "example.com" {
     type secondary;
-    file "db.quantum.local";
+    file "db.example.com";
     primaries { 172.28.1.213; };
 };
 
@@ -344,7 +336,7 @@ After configuration, transferred zone files will be located at:
 /var/cache/bind/
 ├── db.172.24
 ├── db.172.28
-├── db.quantum.local
+├── db.example.com
 ├── managed-keys.bind
 └── managed-keys.bind.jnl
 ```
@@ -382,7 +374,7 @@ network:
   ethernets:
     <interface-name>:
       nameservers:
-        search: [quantum.local]
+        search: [example.com]
         addresses:
           - 127.0.0.1
           - 8.8.8.8
@@ -414,13 +406,13 @@ rndc reload
 
 ```bash
 # Test against primary server
-dig quantum.local @172.28.1.213
-dig dns1.quantum.local @172.28.1.213
-dig pc1.quantum.local @172.28.1.213
+dig example.com @172.28.1.213
+dig dns1.example.com @172.28.1.213
+dig pc1.example.com @172.28.1.213
 
 # Test against secondary server
-dig quantum.local @172.28.1.214
-dig dns2.quantum.local @172.28.1.214
+dig example.com @172.28.1.214
+dig dns2.example.com @172.28.1.214
 ```
 
 ### Test reverse DNS resolution
@@ -465,7 +457,7 @@ named-checkconf
 tail -f /var/log/named/general.log
 
 # Test zone transfers
-dig @172.28.1.213 quantum.local AXFR
+dig @172.28.1.213 example.com AXFR
 ```
 
 ### Important notes
