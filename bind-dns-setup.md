@@ -43,7 +43,7 @@ systemctl enable --now named
 ### Configure BIND defaults
 
 ```bash
-sudo nano /etc/default/named
+sudo vi /etc/default/named
 ```
 
 Add the following lines:
@@ -74,9 +74,9 @@ dig @172.28.1.213 hostname.bind chaos txt
 ## Primary DNS Server Configuration
 
 ### 1. Configure `/etc/bind/named.conf.options`
-
+# Edit the file using your preferred text editor
 ```bash
-nano /etc/bind/named.conf.options
+vi /etc/bind/named.conf.options
 ```
 
 ```bind
@@ -174,7 +174,7 @@ named-checkconf /etc/bind/named.conf.options
 ### 3. Configure `/etc/bind/named.conf.local`
 
 ```bash
-nano /etc/bind/named.conf.local
+vi /etc/bind/named.conf.local
 ```
 
 ```bind
@@ -346,7 +346,7 @@ After configuration, transferred zone files will be located at:
 ### Option 1: Using systemd-resolved
 
 ```bash
-sudo nano /etc/systemd/resolved.conf
+sudo vi /etc/systemd/resolved.conf
 ```
 
 Add in the `[Resolve]` section:
@@ -364,7 +364,7 @@ systemd-resolve --status
 
 ```bash
 ls /etc/netplan/
-sudo nano /etc/netplan/01-netcfg.yaml
+sudo vi /etc/netplan/01-netcfg.yaml
 ```
 
 Configure nameservers:
