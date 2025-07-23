@@ -45,7 +45,7 @@ systemctl enable --now named
 ```bash
 sudo vi /etc/default/named
 ```
-
+## This disables automatic interaction with resolvconf, which is often unnecessary for authoritative DNS servers
 Add the following lines:
 ```
 RESOLVCONF=no
