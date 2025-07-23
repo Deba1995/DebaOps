@@ -155,7 +155,7 @@ options {
     //========================================================================
     dnssec-validation auto;
 
-    listen-on-v6 { ::1; };  // allow localhost IPv6
+    listen-on-v6 { none; };  // disallow ipv6
 
     // rate-limiting to prevent DNS amplification attacks,
     rate-limit {
