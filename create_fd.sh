@@ -6,9 +6,9 @@
 # DESCRIPTION: A robust Bash script to safely create files or directories.
 #              Validates inputs, checks for existing targets, and supports dry-run.
 #
-# AUTHOR: [Your Name or GitHub Username]
-# VERSION: 1.0
-# LICENSE: MIT (or your preferred license)
+# Author: Deba Protim Dey
+# Email: debadey886@gmail.com
+# Version: 1.0
 #
 # USAGE: ./create_fd.sh <f|d> <target> [--dry-run]
 #        ./create_fd.sh -h
