@@ -68,7 +68,9 @@ fi
 # =============================================================================
 run() {
     if [[ "$dry_run" == true ]]; then
-        echo "[DRY RUN] Executing: $@"
+        printf '[DRY RUN] '
+        printf '%q ' "$@"
+        printf '\n'
     else
         "$@"
     fi
