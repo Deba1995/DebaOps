@@ -136,4 +136,8 @@ else
     exit 1
 fi
 
-echo "✅ Done! Target '$target' successfully created."
+if [[ "$dry_run" == false ]]; then
+    echo "✅ Done! Target '$target' successfully created."
+else
+    echo "✅ Dry run complete. No changes made."
+fi
