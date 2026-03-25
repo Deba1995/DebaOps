@@ -107,7 +107,7 @@ validate_not_empty "$size" "Size" || exit 1
 # =============================================================================
 check_target() {
     if [[ ! -d "$1" ]]; then
-        echo "Error: Target doesn't exists -> $1"
+        echo "Error: Target does not exists -> $1"
         return 1
     fi
 }
